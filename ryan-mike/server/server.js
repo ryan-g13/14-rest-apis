@@ -29,25 +29,30 @@ app.get('/api/v1/admin', (req, res) => res.send(TOKEN === parseInt(req.query.tok
 app.get('/api/v1/books/find', (req, res) => {
   let url = 'https://www.googleapis.com/books/v1/volumes';
 
-  // COMMENT: Explain the following four lines of code. How is the query built out? What information will be used to create the query?
+  // DONE: Explain the following four lines of code. How is the query built out? What information will be used to create the query?
+  // define a variable as a blank string. This appends to the query variable the fields that exist from user search, which include the strings necessary to search the google books api.
   let query = ''
   if(req.query.title) query += `+intitle:${req.query.title}`;
   if(req.query.author) query += `+inauthor:${req.query.author}`;
   if(req.query.isbn) query += `+isbn:${req.query.isbn}`;
 
-  // COMMENT: What is superagent? How is it being used here? What other libraries are available that could be used for the same purpose?
+  // DONE: What is superagent? How is it being used here? What other libraries are available that could be used for the same purpose?
+  // Superagent is a proxy which allows our client to communicate with other servers other than ours through our server. It is being used to allow us to access the google books api. other proxies include squid Wingate AnyProxy. CORS
   superagent.get(url)
     .query({'q': query})
     .query({'key': API_KEY})
     .then(response => response.body.items.map((book, idx) => {
 
-      // COMMENT: The line below is an example of destructuring. Explain destructuring in your own words.
+      // DONE: The line below is an example of destructuring. Explain destructuring in your own words.
+      // Destructuring is unpacking objects into distinct variables. 
       let { title, authors, industryIdentifiers, imageLinks, description } = book.volumeInfo;
 
       // COMMENT: What is the purpose of the following placeholder image?
+      // This is for when a production image is not available, such that the GUI does not break when an image link is not provided. 
       let placeholderImage = 'http://www.newyorkpaddy.com/images/covers/NoCoverAvailable.jpg';
 
       // COMMENT: Explain how ternary operators are being used below.
+      // The ternary operators are being used to verify the data is present if it is return the value if not return default statement saying DNE.
       return {
         title: title ? title : 'No title available',
         author: authors ? authors[0] : 'No authors available',
@@ -61,7 +66,8 @@ app.get('/api/v1/books/find', (req, res) => {
     .catch(console.error)
 })
 
-// COMMENT: How does this route differ from the route above? What does ':isbn' refer to in the code below?
+// DONE: How does this route differ from the route above? What does ':isbn' refer to in the code below?
+// This is selecting a single book rather than all of the books in the search terms from the user. This is a specific parameter that is passed on a event submission of an event handler.
 app.get('/api/v1/books/find/:isbn', (req, res) => {
   let url = 'https://www.googleapis.com/books/v1/volumes';
   superagent.get(url)
