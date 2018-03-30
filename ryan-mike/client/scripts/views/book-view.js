@@ -81,15 +81,18 @@ var app = app || {};
     })
   };
 
-// COMMENT: What is the purpose of this method?
+// DONE: What is the purpose of this method?
+// The purpose of the method is initialize and display the Search form page.  
   bookView.initSearchFormPage = function() {
     resetView();
     $('.search-view').show();
     $('#search-form').on('submit', function(event) {
-      // COMMENT: What default behavior is being prevented here?
+      // DONE: What default behavior is being prevented here?
+      // The default behavior prevented is a page refresh.
       event.preventDefault();
 
-      // COMMENT: What is the event.target, below? What will happen if the user does not provide the information needed for the title, author, or isbn properties?
+      // DONE: What is the event.target, below? What will happen if the user does not provide the information needed for the title, author, or isbn properties?
+      // The event.target is on submit button press. This will pass an empty book object into the module.Book.find method. This should result in call to the home display page?
       let book = {
         title: event.target.title.value || '',
         author: event.target.author.value || '',
@@ -98,24 +101,28 @@ var app = app || {};
 
       module.Book.find(book, bookView.initSearchResultsPage);
 
-      // COMMENT: Why are these values set to an empty string?
+      // DONE: Why are these values set to an empty string?
+      // They are empty because we want to clear the fields after the search has been completed.
       event.target.title.value = '';
       event.target.author.value = '';
       event.target.isbn.value = '';
     })
   }
 
-  // COMMENT: What is the purpose of this method?
+  // DONE: What is the purpose of this method?
+  // This method returns the output of the search based on user interaction/input. 
   bookView.initSearchResultsPage = function() {
     resetView();
     $('.search-results').show();
     $('#search-list').empty();
 
-    // COMMENT: Explain how the .forEach() method is being used below.
+    // DONE: Explain how the .forEach() method is being used below.
+    // For each object inside the Book.all array, pass in to the arrow function as 'book' to target the 'search-list' id and append the object once Handlebars has acted on the object to the DOM at the ID. 
     module.Book.all.forEach(book => $('#search-list').append(book.toHtml()));
     $('.detail-button a').text('Add to list').attr('href', '/');
     $('.detail-button').on('click', function(e) {
-      // COMMENT: Explain the following line of code.
+      // DONE: Explain the following line of code.
+      // This line of code grabs the bookid on the dom for this instance where the button that is listening is clicked therefore passing it as a parameter to the fineOne method. 
       module.Book.findOne($(this).parent().parent().parent().data('bookid'))
     });
   }
